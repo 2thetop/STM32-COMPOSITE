@@ -31,6 +31,8 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+#include <stdarg.h>
+
 #include "stm32f1xx_hal.h"
 #include "usb_device.h"
 
@@ -58,6 +60,8 @@ static void MX_USART1_UART_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
+uint8_t read_buffer[128];
+uint8_t *readptr = read_buffer;
 
 /* USER CODE END 0 */
 
@@ -78,8 +82,17 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+
+  HAL_GPIO_WritePin(GPIOE, LED_1_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOE, LED_2_Pin, GPIO_PIN_SET);
+
   MX_USART1_UART_Init();
+
+  HAL_GPIO_WritePin(GPIOE, LED_1_Pin, GPIO_PIN_RESET);
+
   MX_USB_DEVICE_Init();
+
+  HAL_GPIO_WritePin(GPIOE, LED_2_Pin, GPIO_PIN_RESET);
 
   /* USER CODE BEGIN 2 */
 
@@ -87,11 +100,38 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  uint32_t ticks = HAL_GetTick();
+
   while (1)
   {
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
+	  if ((huart1.State & 0x20) == 0 ) {
+
+		  readptr = read_buffer;
+	      HAL_UART_Receive_IT(&huart1, read_buffer, sizeof(read_buffer));
+
+  	  } else if ((huart1.State & 0x10) == 0) {
+
+  		if (huart1.pRxBuffPtr > readptr) {
+
+  			HAL_UART_Transmit_IT(&huart1, readptr, huart1.pRxBuffPtr > readptr);
+  			readptr = huart1.pRxBuffPtr;
+  		}
+  	  }
+
+	  uint32_t c_tick = HAL_GetTick();
+	  if (c_tick >= ticks + 500) {
+		  ticks = c_tick;
+
+		  HAL_GPIO_TogglePin(GPIOE, LED_2_Pin);
+
+//		  uint8_t stamp[32];
+//		  uint8_t length = sprintf(stamp, "T%ul\r\n", ticks);
+//		  HAL_UART_Transmit(&huart1, stamp, length, 1000);
+	  }
 
   }
   /* USER CODE END 3 */
@@ -192,6 +232,12 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if (huart->Instance == USART1)
+	{
+	}
+}
 
 /* USER CODE END 4 */
 

@@ -37,7 +37,8 @@
 #include "usb_device.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "usbd_hid_cdc.h"
+#include "usbd_cdc_if.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -45,7 +46,13 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+static struct {
+	uint8_t		id;			// 0x01
+	uint8_t		buttons;	// red + black
+	uint8_t		gears;		// 1-7 (reverse)
+	uint8_t		d_pad;		// lower 4 bits
+	uint16_t	axis[3];
+} report;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -133,6 +140,8 @@ int main(void)
 //		  HAL_UART_Transmit(&huart1, stamp, length, 1000);
 	  }
 
+	  report.id = 0x01;
+	  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, sizeof(report));
   }
   /* USER CODE END 3 */
 
@@ -239,6 +248,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	}
 }
 
+void utx(uint8_t buf, uint32_t length) {
+
+	HAL_UART_Transmit(&huart1, buf, length, 1000);
+}
 /* USER CODE END 4 */
 
 /**

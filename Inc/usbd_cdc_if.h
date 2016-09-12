@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
-  * @file           : usbd_custom_hid_if_if.h
-  * @brief          : header file for the usbd_custom_hid_if.c file
+  * @file           : usbd_cdc_if.h
+  * @brief          : Header for usbd_cdc_if file.
   ******************************************************************************
   * COPYRIGHT(c) 2016 STMicroelectronics
   *
@@ -31,15 +31,14 @@
 */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-
-#ifndef __USBD_CUSTOM_HID_IF_H_
-#define __USBD_CUSTOM_HID_IF_H_
+#ifndef __USBD_CDC_IF_H
+#define __USBD_CDC_IF_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
-#include "usbd_customhid.h"
+#include "usbd_hid_cdc.h"
 /* USER CODE BEGIN INCLUDE */
 /* USER CODE END INCLUDE */
 
@@ -47,12 +46,12 @@
   * @{
   */
   
-/** @defgroup USBD_CUSTOM_HID
+/** @defgroup USBD_CDC_IF
   * @brief header 
   * @{
   */ 
 
-/** @defgroup USBD_CUSTOM_HID_Exported_Defines
+/** @defgroup USBD_CDC_IF_Exported_Defines
   * @{
   */ 
 /* USER CODE BEGIN EXPORTED_DEFINES */
@@ -62,7 +61,7 @@
   * @}
   */ 
 
-/** @defgroup USBD_CUSTOM_HID_Exported_Types
+/** @defgroup USBD_CDC_IF_Exported_Types
   * @{
   */  
 /* USER CODE BEGIN EXPORTED_TYPES */
@@ -72,7 +71,7 @@
   * @}
   */ 
 
-/** @defgroup USBD_CUSTOM_HID_Exported_Macros
+/** @defgroup USBD_CDC_IF_Exported_Macros
   * @{
   */ 
 /* USER CODE BEGIN EXPORTED_MACRO */
@@ -82,10 +81,10 @@
   * @}
   */ 
 
-/** @defgroup USBD_CUSTOM_HID_Exported_Variables
+/** @defgroup USBD_AUDIO_IF_Exported_Variables
   * @{
   */ 
-  extern USBD_CUSTOM_HID_ItfTypeDef  USBD_CustomHID_fops_FS;
+extern USBD_CDC_ItfTypeDef  USBD_Interface_fops_FS;
 
 /* USER CODE BEGIN EXPORTED_VARIABLES */
 /* USER CODE END EXPORTED_VARIABLES */
@@ -94,28 +93,29 @@
   * @}
   */ 
 
-/** @defgroup USBD_CUSTOM_HID_Exported_FunctionsPrototype
+/** @defgroup USBD_CDC_IF_Exported_FunctionsPrototype
   * @{
   */ 
+uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
 
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
 /* USER CODE END EXPORTED_FUNCTIONS */
 /**
   * @}
-  */
-   
+  */ 
+
 /**
   * @}
   */ 
 
 /**
-* @}
-*/
- 
+  * @}
+  */ 
+  
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __USBD_CUSTOM_HID_IF_H_ */
+  
+#endif /* __USBD_CDC_IF_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

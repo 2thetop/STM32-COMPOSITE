@@ -133,8 +133,8 @@ int main(void)
 	  uint32_t c_tick = HAL_GetTick();
 
 	  report.id = 0x01;
-	  report.buttons = 0;
-	  report.d_pad = 0;
+	  report.buttons = (c_tick / 1000) & 0xff;
+	  report.d_pad = ((c_tick / 1000) >> 8) & 0xff;;
 	  report.gears = 0;
 	  report.axis[0] = 0;
 	  report.axis[1] = 0;
@@ -256,7 +256,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 void utx(uint8_t *buf, uint32_t length) {
 
 	HAL_UART_Transmit_IT(&huart1, buf, length);
-	CDC_Transmit_FS((uint8_t *)buf, length);
+//	CDC_Transmit_FS((uint8_t *)buf, length);
 }
 /* USER CODE END 4 */
 

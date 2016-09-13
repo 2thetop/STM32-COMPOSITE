@@ -54,8 +54,8 @@
 #define CDC_EP0IN_ADDR                 0x82	/* data IN  */
 #define HID_EP0IN_ADDR                 0x83
 
-#define CDC_EP1OUT_ADDR				   0x02 /* data OUT */
-#define HID_EP1OUT_ADDR                0x03
+#define CDC_EP1OUT_ADDR				   0x01 /* data OUT */
+#define HID_EP1OUT_ADDR                0x02
 
 #define HID_EP0IN_SIZE                 0x0a
 #define HID_EP1OUT_SIZE                0x40

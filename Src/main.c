@@ -132,11 +132,12 @@ int main(void)
 	  uint32_t c_tick = HAL_GetTick();
 
 	  report.id = 0x01;
-	  report.buttons = 0xff;
+	  report.buttons = 0;
 	  report.d_pad = 0;
 	  report.gears = 0;
-	  report.axis[0] = c_tick >> 16;
-	  report.axis[1] = c_tick & 0xffffu;
+	  report.axis[0] = 0;
+	  report.axis[1] = 0;
+	  report.axis[2] = 0;
 
 	  if (c_tick >= ticks + 500) {
 		  ticks = c_tick;

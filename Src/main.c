@@ -124,7 +124,8 @@ int main(void)
 
   		if (huart1.pRxBuffPtr > readptr) {
 
-  			HAL_UART_Transmit_IT(&huart1, readptr, huart1.pRxBuffPtr > readptr);
+  			// HAL_UART_Transmit_IT(&huart1, readptr, huart1.pRxBuffPtr > readptr);
+  			utx(readptr, huart1.pRxBuffPtr > readptr);
   			readptr = huart1.pRxBuffPtr;
   		}
   	  }
@@ -254,9 +255,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 void utx(uint8_t *buf, uint32_t length) {
 
-//	while ((huart1.State & 0x10) != 0);
-	HAL_UART_Transmit(&huart1, buf, length, 1000);
-//	CDC_Transmit_FS((uint8_t *)buf, length);
+	HAL_UART_Transmit_IT(&huart1, buf, length);
+	CDC_Transmit_FS((uint8_t *)buf, length);
 }
 /* USER CODE END 4 */
 
@@ -269,8 +269,17 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler */
   /* User can add his own implementation to report the HAL error return state */
+  uint32_t ticks = 0;
+
   while(1) 
   {
+	  uint32_t c_tick = HAL_GetTick();
+
+      if (c_tick >= ticks + 200) {
+    	  ticks = c_tick;
+
+    	  HAL_GPIO_TogglePin(GPIOE, LED_1_Pin);
+      }
   }
   /* USER CODE END Error_Handler */ 
 }

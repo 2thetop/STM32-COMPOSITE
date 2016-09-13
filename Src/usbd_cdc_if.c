@@ -278,14 +278,7 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
     return USBD_BUSY;
   }
 
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-
   USBD_CDC_SetTxBuffer(&hUsbDeviceFS, Buf, Len);
-
-
-  //  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-
-
   result = USBD_CDC_TransmitPacket(&hUsbDeviceFS);
   /* USER CODE END 7 */ 
   return result;

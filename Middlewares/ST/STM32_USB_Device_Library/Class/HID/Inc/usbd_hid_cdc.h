@@ -131,12 +131,8 @@ typedef struct
   uint32_t             HIDAltSetting;
   HID_StateTypeDef     state;
 
-//  uint32_t             HIDdata[VCOM_DATA_SIZE/4];      /* Force 32bits alignment */
-//  uint8_t              CmdOpCode;
-//  uint8_t              CmdLength;
   uint8_t              *HIDRxBuffer;
   uint32_t             HIDRxLength;
-
   __IO uint32_t        HIDRxState;
 
   /* CDC fields */

@@ -223,7 +223,7 @@ __ALIGN_BEGIN static uint8_t USBD_HID_CDC_CfgDesc[USB_HID_CONFIG_DESC_SIZE]  __A
   /* 45 */
   0x07,         /* bLength: Endpoint Descriptor size */
   USB_DESC_TYPE_ENDPOINT, /* bDescriptorType: Endpoint */
-  CDC_CMD_EP,   /* bEndpointAddress */
+  CDC_EPCMD_ADDR,   /* bEndpointAddress */
   0x03,         /* bmAttributes: Interrupt */
   LOBYTE(CDC_CMD_PACKET_SIZE), /* wMaxPacketSize: */
   HIBYTE(CDC_CMD_PACKET_SIZE),
@@ -280,7 +280,7 @@ __ALIGN_BEGIN static uint8_t USBD_HID_CDC_CfgDesc[USB_HID_CONFIG_DESC_SIZE]  __A
   /* 84 */
   0x09,         /*bLength: HID Descriptor size*/
   HID_DESCRIPTOR_TYPE, /*bDescriptorType: HID*/
-  0x00 /* 0x11 */,     /*bcdHID: HID Class Spec release number: 1.11*/
+  0x11,         /*bcdHID: HID Class Spec release number: 1.11*/
   0x01,
   0x00,         /*bCountryCode: Hardware target country*/
   0x01,         /*bNumDescriptors: Number of HID class descriptors to follow*/
@@ -423,7 +423,7 @@ static uint8_t  USBD_HID_CDC_Init (USBD_HandleTypeDef *pdev,
 
   /* Open Command IN EP */
   USBD_LL_OpenEP(pdev,
-                   CDC_CMD_EP,
+                   CDC_EPCMD_ADDR,
                    USBD_EP_TYPE_INTR,
                    CDC_CMD_PACKET_SIZE);
 
@@ -478,7 +478,7 @@ static uint8_t  USBD_HID_CDC_DeInit (USBD_HandleTypeDef *pdev,
   USBD_LL_CloseEP(pdev, CDC_EP1OUT_ADDR);
   
   /* Open Command IN EP */
-  USBD_LL_CloseEP(pdev, CDC_CMD_EP);
+  USBD_LL_CloseEP(pdev, CDC_EPCMD_ADDR);
 
   /* FRee allocated memory */
   if(pdev->pClassData != NULL)
@@ -729,10 +729,11 @@ static uint8_t  USBD_HID_CDC_DataIn (USBD_HandleTypeDef *pdev,
   be caused by  a new transfer before the end of the previous transfer */
   if (h != NULL) {
 
+	epnum |= 0x80;
 	if (epnum == HID_EP0IN_ADDR) {
-	  h->state = HID_IDLE;
+		h->state = HID_IDLE;
 	} else {
-	  h->CDCTxState = 0;
+		h->CDCTxState = 0;
 	}
 
 	return USBD_OK;

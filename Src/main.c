@@ -130,17 +130,20 @@ int main(void)
   	  }
 
 	  uint32_t c_tick = HAL_GetTick();
+
+	  report.id = 0x01;
+	  report.buttons = 0xff;
+	  report.d_pad = 0;
+	  report.gears = 0;
+	  report.axis[0] = c_tick >> 16;
+	  report.axis[1] = c_tick & 0xffffu;
+
 	  if (c_tick >= ticks + 500) {
 		  ticks = c_tick;
 
 		  HAL_GPIO_TogglePin(GPIOE, LED_2_Pin);
-
-//		  uint8_t stamp[32];
-//		  uint8_t length = sprintf(stamp, "T%ul\r\n", ticks);
-//		  HAL_UART_Transmit(&huart1, stamp, length, 1000);
 	  }
 
-	  report.id = 0x01;
 	  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, sizeof(report));
   }
   /* USER CODE END 3 */
@@ -248,9 +251,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	}
 }
 
-void utx(uint8_t buf, uint32_t length) {
+void utx(uint8_t *buf, uint32_t length) {
 
+//	while ((huart1.State & 0x10) != 0);
 	HAL_UART_Transmit(&huart1, buf, length, 1000);
+//	CDC_Transmit_FS((uint8_t *)buf, length);
 }
 /* USER CODE END 4 */
 

@@ -269,9 +269,13 @@ USBD_StatusTypeDef  USBD_LL_Init (USBD_HandleTypeDef *pdev)
 
   HAL_PCDEx_PMAConfig((PCD_HandleTypeDef*)pdev->pData, 0x00, PCD_SNG_BUF, 0x18);
   HAL_PCDEx_PMAConfig((PCD_HandleTypeDef*)pdev->pData, 0x80, PCD_SNG_BUF, 0x58);
-  HAL_PCDEx_PMAConfig((PCD_HandleTypeDef*)pdev->pData, 0x81, PCD_SNG_BUF, 0x98);
-  HAL_PCDEx_PMAConfig((PCD_HandleTypeDef*)pdev->pData, 0x01, PCD_SNG_BUF, 0xD8);
-  HAL_PCDEx_PMAConfig((PCD_HandleTypeDef*)pdev->pData, 0x82, PCD_SNG_BUF, 0x118);
+
+  HAL_PCDEx_PMAConfig((PCD_HandleTypeDef*)pdev->pData, CDC_EPCMD_ADDR,  PCD_SNG_BUF, 0x98);
+  HAL_PCDEx_PMAConfig((PCD_HandleTypeDef*)pdev->pData, CDC_EP0IN_ADDR,  PCD_SNG_BUF, 0xD8);
+  HAL_PCDEx_PMAConfig((PCD_HandleTypeDef*)pdev->pData, HID_EP0IN_ADDR,  PCD_SNG_BUF, 0x118);
+
+  HAL_PCDEx_PMAConfig((PCD_HandleTypeDef*)pdev->pData, CDC_EP1OUT_ADDR, PCD_SNG_BUF, 0x158);
+  HAL_PCDEx_PMAConfig((PCD_HandleTypeDef*)pdev->pData, HID_EP1OUT_ADDR, PCD_SNG_BUF, 0x198);
 
   return USBD_OK;
 }

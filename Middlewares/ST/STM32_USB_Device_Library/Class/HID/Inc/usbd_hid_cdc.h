@@ -50,21 +50,20 @@
   * @{
   */ 
 
+#define CDC_EPCMD_ADDR				   0x81
+#define CDC_EP0IN_ADDR                 0x82	/* data IN  */
 #define HID_EP0IN_ADDR                 0x83
-#define HID_EP0IN_SIZE                 0x04
 
-#define HID_EP1OUT_ADDR                0x03
+#define CDC_EP1OUT_ADDR				   0x01 /* data OUT */
+#define HID_EP1OUT_ADDR                0x02
+
+#define HID_EP0IN_SIZE                 0x0a
 #define HID_EP1OUT_SIZE                0x40
 
 #define VCOM_DATA_SIZE	   			   USB_FS_MAX_PACKET_SIZE
-
-#define CDC_EP0IN_ADDR                 0x82	/* data IN  */
 #define CDC_EP0IN_SIZE                 VCOM_DATA_SIZE
-
-#define CDC_EP1OUT_ADDR				   0x02 /* data OUT */
 #define CDC_EP1OUT_SIZE                VCOM_DATA_SIZE
 
-#define CDC_CMD_EP					   0x81
 #define CDC_CMD_PACKET_SIZE            8  /* Control Endpoint Packet size */
 
 #define USB_HID_CONFIG_DESC_SIZE       107

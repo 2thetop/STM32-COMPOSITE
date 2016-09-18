@@ -666,9 +666,10 @@ uint8_t USBD_HID_SendReport     (USBD_HandleTypeDef  *pdev,
                         HID_EP0IN_ADDR,
                         report,
                         len);
+      return USBD_OK;
     }
   }
-  return USBD_OK;
+  return USBD_FAIL;
 }
 
 /**
@@ -761,6 +762,14 @@ static uint8_t  USBD_HID_CDC_DataOut (USBD_HandleTypeDef *pdev,
 	{
 		h->CDCRxLength = USBD_LL_GetRxDataSize (pdev, epnum);
 	    ((USBD_CDC_ItfTypeDef *)pdev->pUserData)->Receive(h->CDCRxBuffer, &h->CDCRxLength);
+	    USBD_LL_PrepareReceive(pdev, CDC_EP1OUT_ADDR, h->CDCRxBuffer, CDC_EP1OUT_SIZE);
+
+	    return USBD_OK;
+	}
+	else
+	{
+		h->HIDRxLength = USBD_LL_GetRxDataSize (pdev, epnum);
+	    USBD_LL_PrepareReceive(pdev, HID_EP1OUT_ADDR, h->HIDRxBuffer, HID_EP1OUT_SIZE);
 
 	    return USBD_OK;
 	}

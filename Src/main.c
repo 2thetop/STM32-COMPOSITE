@@ -55,6 +55,9 @@ static struct {
 	uint8_t		d_pad;		// lower 4 bits
 	uint16_t	axis[3];
 } report;
+
+static volatile uint32_t u100ticks = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -113,7 +116,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   uint32_t ticks = HAL_GetTick();
-  HAL_TIM_Base_Start_IT(&htim7);
 
   while (1)
   {
@@ -145,10 +147,18 @@ int main(void)
 	  report.axis[1] = 0;
 	  report.axis[2] = 0;
 
-	  if (c_tick >= ticks + 500) {
+	  if (c_tick >= ticks + 500) { // 0.5s
 		  ticks = c_tick;
 
+		  HAL_TIM_Base_Start_IT(&htim7);
 		  HAL_GPIO_TogglePin(GPIOE, LED_2_Pin);
+	  }
+
+	  if (u100ticks >= 2000) { // 0.2s
+		  HAL_TIM_Base_Stop_IT(&htim7);
+		  u100ticks = 0;
+
+		  HAL_GPIO_TogglePin(GPIOE, LED_1_Pin);
 	  }
 
 	  USBD_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, sizeof(report));
@@ -210,9 +220,9 @@ static void MX_TIM7_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim7.Instance = TIM7;
-  htim7.Init.Prescaler = 65535;
+  htim7.Init.Prescaler = 720; // 100k times per second
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim7.Init.Period = 1098;
+  htim7.Init.Period = 10; // get interrupt 10k times per second
   if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
   {
     Error_Handler();
@@ -288,15 +298,11 @@ void utx(uint8_t *buf, uint32_t length) {
 //	CDC_Transmit_FS((uint8_t *)buf, length);
 }
 
-void TIM7_IRQHandler(void)
-{
-  HAL_TIM_IRQHandler(&htim7);
-}
-
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if (htim->Instance == TIM7) {
-		HAL_GPIO_TogglePin(GPIOE, LED_1_Pin);
+		// HAL_GPIO_TogglePin(GPIOE, LED_1_Pin);
+		u100ticks++;
 	}
 }
 /* USER CODE END 4 */
@@ -312,16 +318,16 @@ void Error_Handler(void)
   /* User can add his own implementation to report the HAL error return state */
   uint32_t ticks = 0;
 
-  while(1) 
-  {
-	  uint32_t c_tick = HAL_GetTick();
-
-      if (c_tick >= ticks + 200) {
-    	  ticks = c_tick;
-
-    	  HAL_GPIO_TogglePin(GPIOE, LED_1_Pin);
-      }
-  }
+//  while(1)
+//  {
+//	  uint32_t c_tick = HAL_GetTick();
+//
+//      if (c_tick >= ticks + 200) {
+//    	  ticks = c_tick;
+//
+//    	  HAL_GPIO_TogglePin(GPIOE, LED_1_Pin);
+//      }
+//  }
   /* USER CODE END Error_Handler */ 
 }
 

@@ -31,17 +31,19 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
-#include <stdarg.h>
-
 #include "stm32f1xx_hal.h"
 #include "usb_device.h"
 
 /* USER CODE BEGIN Includes */
+#include <stdarg.h>
+
 #include "usbd_hid_cdc.h"
 #include "usbd_cdc_if.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+TIM_HandleTypeDef htim7;
+
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
@@ -60,10 +62,11 @@ void SystemClock_Config(void);
 void Error_Handler(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_TIM7_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-
+void utx(uint8_t *buf, uint32_t length);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -100,6 +103,7 @@ int main(void)
   MX_USB_DEVICE_Init();
 
   HAL_GPIO_WritePin(GPIOE, LED_2_Pin, GPIO_PIN_RESET);
+  MX_TIM7_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -109,6 +113,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   uint32_t ticks = HAL_GetTick();
+  HAL_TIM_Base_Start_IT(&htim7);
 
   while (1)
   {
@@ -198,6 +203,30 @@ void SystemClock_Config(void)
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
+/* TIM7 init function */
+static void MX_TIM7_Init(void)
+{
+
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim7.Instance = TIM7;
+  htim7.Init.Prescaler = 65535;
+  htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim7.Init.Period = 1098;
+  if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim7, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+}
+
 /* USART1 init function */
 static void MX_USART1_UART_Init(void)
 {
@@ -257,6 +286,18 @@ void utx(uint8_t *buf, uint32_t length) {
 
 	HAL_UART_Transmit_IT(&huart1, buf, length);
 //	CDC_Transmit_FS((uint8_t *)buf, length);
+}
+
+void TIM7_IRQHandler(void)
+{
+  HAL_TIM_IRQHandler(&htim7);
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim->Instance == TIM7) {
+		HAL_GPIO_TogglePin(GPIOE, LED_1_Pin);
+	}
 }
 /* USER CODE END 4 */
 
